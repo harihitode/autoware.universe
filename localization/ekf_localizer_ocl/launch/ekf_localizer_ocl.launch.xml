@@ -70,7 +70,7 @@
     <param name="proc_stddev_vx_c" value="$(var proc_stddev_vx_c)"/>
     <param name="proc_stddev_wz_c" value="$(var proc_stddev_wz_c)"/>
 
-    <param name="use_double" value="$(arg use_double)"/>
+    <param name="use_double" value="$(var use_double)"/>
 
     <remap from="ekf_odom" to="$(var output_odom_name)"/>
     <remap from="ekf_pose" to="$(var output_pose_name)"/>

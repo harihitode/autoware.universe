@@ -21,7 +21,7 @@
     <arg name="proc_stddev_vx_c" value="10.0"/>
     <arg name="proc_stddev_wz_c" value="5.0"/>
 
-    <arg name="use_double" vaule="true"/>
+    <arg name="use_double" value="true"/>
   </include>
   <include file="$(find-pkg-share stop_filter)/launch/stop_filter.launch.xml">
     <arg name="use_twist_with_covariance" value="True"/>
