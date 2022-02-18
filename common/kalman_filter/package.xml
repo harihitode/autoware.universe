@@ -2,12 +2,16 @@
 <package format="2">
   <name>kalman_filter</name>
   <version>0.1.0</version>
-  <description>The kalman filter package</description>
+  <description>The kalman filter package. This version includes OpenCL kernel.</description>
   <maintainer email="yukihiro.saito@tier4.jp">Yukihiro Saito Horibe</maintainer>
+  <maintainer email="daichi.murakami@tier4.jp">Daichi Murakami</maintainer>
   <author email="takamasa.horibe@tier4.jp">Takamasa Horibe</author>
 
   <license>Apache License 2.0</license>
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
 
   <test_depend>ament_cmake_cppcheck</test_depend>
   <test_depend>ament_lint_auto</test_depend>

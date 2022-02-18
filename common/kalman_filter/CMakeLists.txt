@@ -15,10 +15,12 @@ ament_auto_find_build_dependencies()
 
 find_package(eigen3_cmake_module REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(ament_index_cpp REQUIRED)
 
 ament_auto_add_library(kalman_filter SHARED
   src/kalman_filter.cpp
   src/time_delay_kalman_filter.cpp
+  src/time_delay_kalman_filter_ocl.cpp
   include/kalman_filter/kalman_filter.hpp
   include/kalman_filter/time_delay_kalman_filter.hpp
 )
@@ -29,3 +31,5 @@ if(BUILD_TESTING)
 endif()
 
 ament_auto_package()
+
+install(DIRECTORY kernel DESTINATION share/${PROJECT_NAME})

@@ -54,6 +54,21 @@ bool TimeDelayKalmanFilter::predictWithDelay(
 
   const int d_dim_x = dim_x_ex_ - dim_x_;
 
+  /* dump x_next, A, A_transpose, Q */
+  // printf("x_next  ");
+  // std::cout << x_next << std::endl;
+  // printf("A ");
+  // std::cout << A << std::endl;
+  // printf("A_t ");
+  // std::cout << A.transpose() << std::endl;
+  // printf("Q ");
+  // std::cout << Q << std::endl;
+  // // dump x_in, P_in
+  // printf("x_in ");
+  // std::cout << x_ << std::endl;
+  // printf("P_in ");
+  // std::cout << P_ << std::endl;
+
   /* slide states in the time direction */
   Eigen::MatrixXd x_tmp = Eigen::MatrixXd::Zero(dim_x_ex_, 1);
   x_tmp.block(0, 0, dim_x_, 1) = x_next;
@@ -67,6 +82,12 @@ bool TimeDelayKalmanFilter::predictWithDelay(
   P_tmp.block(dim_x_, 0, d_dim_x, dim_x_) = P_.block(0, 0, d_dim_x, dim_x_) * A.transpose();
   P_tmp.block(dim_x_, dim_x_, d_dim_x, d_dim_x) = P_.block(0, 0, d_dim_x, d_dim_x);
   P_ = P_tmp;
+
+  /* dump x_out, P_out (test vector) */
+  // printf("x_out ");
+  // std::cout << x_ << std::endl;
+  // printf("P_out ");
+  // std::cout << P_ << std::endl;
 
   return true;
 }
