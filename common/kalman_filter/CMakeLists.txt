@@ -6,6 +6,7 @@ autoware_package()
 
 find_package(eigen3_cmake_module REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(ament_index_cpp REQUIRED)
 
 include_directories(
   SYSTEM
@@ -15,8 +16,11 @@ include_directories(
 ament_auto_add_library(kalman_filter SHARED
   src/kalman_filter.cpp
   src/time_delay_kalman_filter.cpp
+  src/time_delay_kalman_filter_ocl.cpp
   include/kalman_filter/kalman_filter.hpp
   include/kalman_filter/time_delay_kalman_filter.hpp
 )
 
 ament_auto_package()
+
+install(DIRECTORY kernel DESTINATION share/${PROJECT_NAME})
