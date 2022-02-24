@@ -21,7 +21,9 @@ ament_auto_add_executable(ndt_scan_matcher
   src/ndt_scan_matcher_node.cpp
   src/ndt_scan_matcher_core.cpp
   src/util_func.cpp
-)
+  )
+
+target_link_libraries(ndt_scan_matcher /usr/lib/x86_64-linux-gnu/libOpenCL.so.1)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

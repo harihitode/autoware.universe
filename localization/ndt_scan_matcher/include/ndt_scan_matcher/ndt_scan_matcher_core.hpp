@@ -20,6 +20,7 @@
 #include "ndt_scan_matcher/particle.hpp"
 
 #include <ndt/omp.hpp>
+#include <ndt/ocl.hpp>
 #include <ndt/pcl_generic.hpp>
 #include <ndt/pcl_modified.hpp>
 #include <rclcpp/rclcpp.hpp>
@@ -51,7 +52,7 @@
 #include <thread>
 #include <vector>
 
-enum class NDTImplementType { PCL_GENERIC = 0, PCL_MODIFIED = 1, OMP = 2 };
+enum class NDTImplementType { PCL_GENERIC = 0, PCL_MODIFIED = 1, OMP = 2, OCL = 3 };
 enum class ConvergedParamType {
   TRANSFORM_PROBABILITY = 0,
   NEAREST_VOXEL_TRANSFORMATION_LIKELIHOOD = 1
@@ -72,6 +73,10 @@ std::shared_ptr<NormalDistributionsTransformBase<PointSource, PointTarget>> getN
   }
   if (ndt_mode == NDTImplementType::OMP) {
     ndt_ptr.reset(new NormalDistributionsTransformOMP<PointSource, PointTarget>);
+    return ndt_ptr;
+  }
+  if (ndt_mode == NDTImplementType::OCL) {
+    ndt_ptr.reset(new NormalDistributionsTransformOCL<PointSource, PointTarget>);
     return ndt_ptr;
   }
 
