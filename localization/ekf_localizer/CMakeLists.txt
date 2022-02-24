@@ -22,6 +22,7 @@ ament_auto_add_executable(ekf_localizer
   src/ekf_localizer.cpp
 )
 ament_target_dependencies(ekf_localizer kalman_filter)
+target_link_libraries(ekf_localizer /usr/lib/x86_64-linux-gnu/libOpenCL.so.1)
 
 # if(BUILD_TESTING)
 #   find_package(ament_cmake_gtest REQUIRED)
