@@ -1,3 +1,11 @@
+// Copyright 2021 Tier IV inc. All rights reserved.
+//
+// Add OpenCL type to implementation method in NDTScanMatcher class.
+//
+// This class is also licensed under the Apache License, Version 2.0.
+//
+// ORIGINAL LICENSE
+//
 // Copyright 2015-2019 Autoware Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,6 +43,10 @@
 #include <functional>
 #include <iomanip>
 #include <thread>
+
+// dump values of exe_time[us], iteration_num, transform_probability and is_converged
+#include <fstream>
+#define NDT_LOG_FILE "ndt_result.csv"
 
 tier4_debug_msgs::msg::Float32Stamped makeFloat32Stamped(
   const builtin_interfaces::msg::Time & stamp, const float data)
@@ -114,6 +126,13 @@ NDTScanMatcher::NDTScanMatcher()
   inversion_vector_threshold_(-0.9),
   oscillation_threshold_(10)
 {
+  {
+    // log file header
+    std::ofstream output_file(NDT_LOG_FILE, std::ios::out);
+    output_file << "exe_time[us],iteration_num,transform_probability,is_converged" << std::endl;
+    output_file.close();
+  }
+
   key_value_stdmap_["state"] = "Initializing";
 
   int ndt_implement_type_tmp = this->declare_parameter("ndt_implement_type", 0);
@@ -592,6 +611,14 @@ void NDTScanMatcher::callbackSensorPoints(
     is_converged = false;
     ++skipping_publish_num;
     RCLCPP_WARN(get_logger(), "Not Converged");
+  }
+
+  {
+    // dump values to log
+    const int align_itr = ndt_ptr_->getFinalNumIteration();
+    std::ofstream output_file(NDT_LOG_FILE, std::ios::app);
+    output_file << exe_time << "," << align_itr << "," << transform_probability << "," << is_converged << std::endl;
+    output_file.close();
   }
 
   // publish

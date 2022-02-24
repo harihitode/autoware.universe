@@ -27,7 +27,9 @@ ament_auto_add_executable(ndt_scan_matcher
   src/ndt_scan_matcher_node.cpp
   src/ndt_scan_matcher_core.cpp
   src/util_func.cpp
-)
+  )
+
+target_link_libraries(ndt_scan_matcher /usr/lib/x86_64-linux-gnu/libOpenCL.so.1)
 
 ament_auto_package(
   INSTALL_TO_SHARE
