@@ -12,8 +12,7 @@
 
   <arg name="node_name" default="ndt_scan_matcher" description="Use a different name for this node" />
 
-  <node pkg="ndt_scan_matcher" exec="ndt_scan_matcher" name="$(var node_name)" output="log" launch-prefix="xterm -e gdb --args">
-  <!-- <node pkg="ndt_scan_matcher" exec="ndt_scan_matcher" name="$(var node_name)" output="log"> -->
+  <node pkg="ndt_scan_matcher" exec="ndt_scan_matcher" name="$(var node_name)" output="log">
     <remap from="points_raw" to="$(var input/pointcloud)" />
     <!-- <remap from="points_raw" to="$(var input_sensor_points_topic)" /> -->
 
