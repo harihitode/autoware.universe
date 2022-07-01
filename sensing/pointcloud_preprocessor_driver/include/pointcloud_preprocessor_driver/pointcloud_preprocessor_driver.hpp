@@ -101,10 +101,12 @@ private:
     double scan_phase;
   } Config;
 
-  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr velodyne_points_interpolate_ex_pub_;
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pub_output_;
   rclcpp::Subscription<velodyne_msgs::msg::VelodyneScan>::SharedPtr velodyne_scan_;
   rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::VelocityReport>::SharedPtr velocity_report_sub_;
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr set_param_res_;
+
+  size_t max_queue_size_ = 5; //!< @brief The maximum queue size (default: 5).
 
   int32_t sockfd_;  //!< @brief socket for TCP/IP communication
   Config config_;   //!< @brief config settings
@@ -130,7 +132,7 @@ private:
    */
   bool requestPointCloudPreprocessing(
     const velodyne_msgs::msg::VelodyneScan::SharedPtr scanMsg,
-    pcl::PointCloud<velodyne_pointcloud::PointXYZIRADT>::Ptr interpolate_points_xyziradt);
+    pcl::PointCloud<velodyne_pointcloud::PointXYZIRADT>::Ptr points_xyziradt);
 
   /**
    * @brief request for twist data setting to accelerator

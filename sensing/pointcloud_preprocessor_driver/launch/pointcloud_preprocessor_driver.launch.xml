@@ -3,21 +3,16 @@
   <arg name="max_range" default="130.0"/>
   <arg name="min_range" default="0.4"/>
   <arg name="scan_phase" default="0.0"/>
+  <arg name="max_queue_size" default="5"/>
 
   <node pkg="pointcloud_preprocessor_driver" exec="pointcloud_preprocessor_driver" name="pointcloud_preprocessor_driver" output="screen">
 
-    <remap from="velodyne_points_interpolate_ex" to="rectified/pointcloud_ex"/>
+    <remap from="output" to="outlier_filtered/pointcloud"/>
 
     <param name="max_range" value="$(var max_range)"/>
     <param name="min_range" value="$(var min_range)"/>
     <param name="scan_phase" value="$(var scan_phase)"/>
-
-  </node>
-
-  <node pkg="pointcloud_preprocessor" exec="ring_outlier_filter_node" name="ring_outlier_filter" output="screen">
-
-    <remap from="input" to="rectified/pointcloud_ex"/>
-    <remap from="output" to="outlier_filtered/pointcloud"/>
+    <param name="max_queue_size" value="$(var max_queue_size)"/>
 
   </node>
 

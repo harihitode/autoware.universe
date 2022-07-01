@@ -101,15 +101,11 @@ PointcloudPreprocessorDriver::PointcloudPreprocessorDriver(const std::string & n
   scan_phase_desc.floating_point_range.push_back(scan_phase_range);
   config_.scan_phase = this->declare_parameter("scan_phase", 0.0, scan_phase_desc);
 
-  /* request param data setting */
-  if (!requestParamDataSetting()) {
-    return;
-  }
+  max_queue_size_ = static_cast<std::size_t>(declare_parameter("max_queue_size", 5));
 
   // publish
-  velodyne_points_interpolate_ex_pub_ =
-    this->create_publisher<sensor_msgs::msg::PointCloud2>("velodyne_points_interpolate_ex",
-    rclcpp::SensorDataQoS());
+  pub_output_ = this->create_publisher<sensor_msgs::msg::PointCloud2>(
+    "output", rclcpp::SensorDataQoS().keep_last(max_queue_size_));
 
   // set parameter callback
   using std::placeholders::_1;
@@ -124,28 +120,27 @@ PointcloudPreprocessorDriver::PointcloudPreprocessorDriver(const std::string & n
   velocity_report_sub_ = this->create_subscription<autoware_auto_vehicle_msgs::msg::VelocityReport>(
     "/vehicle/status/velocity_status", 10,
     std::bind(&PointcloudPreprocessorDriver::processVelocityReport, this, std::placeholders::_1));
+
+  /* request param data setting */
+  if (!requestParamDataSetting()) {
+    return;
+  }
 }
 
 /** @brief Callback for raw scan messages. */
 void PointcloudPreprocessorDriver::processScan(const velodyne_msgs::msg::VelodyneScan::SharedPtr scanMsg)
 {
-  if (velodyne_points_interpolate_ex_pub_->get_subscription_count() <= 0) {
-    return;
-  }
-
-  pcl::PointCloud<velodyne_pointcloud::PointXYZIRADT>::Ptr interpolate_points_xyziradt(
+  pcl::PointCloud<velodyne_pointcloud::PointXYZIRADT>::Ptr points_xyziradt(
     new pcl::PointCloud<velodyne_pointcloud::PointXYZIRADT>);
 
   /* request point cloud preprocessing */
-  if (!requestPointCloudPreprocessing(scanMsg, interpolate_points_xyziradt)) {
+  if (!requestPointCloudPreprocessing(scanMsg, points_xyziradt)) {
     return;
   }
 
-  if (velodyne_points_interpolate_ex_pub_->get_subscription_count() > 0) {
-    auto ros_pc_msg_ptr = std::make_unique<sensor_msgs::msg::PointCloud2>();
-    pcl::toROSMsg(*interpolate_points_xyziradt, *ros_pc_msg_ptr);
-    velodyne_points_interpolate_ex_pub_->publish(std::move(ros_pc_msg_ptr));
-  }
+  auto ros_pc_msg_ptr = std::make_unique<sensor_msgs::msg::PointCloud2>();
+  pcl::toROSMsg(*points_xyziradt, *ros_pc_msg_ptr);
+  pub_output_->publish(std::move(ros_pc_msg_ptr));
 }
 
 /** \brief Callback for velocity report message */
@@ -191,7 +186,7 @@ rcl_interfaces::msg::SetParametersResult PointcloudPreprocessorDriver::paramCall
 /** \brief Request for point cloud preprocessing to accelerator. */
 bool PointcloudPreprocessorDriver::requestPointCloudPreprocessing(
   const velodyne_msgs::msg::VelodyneScan::SharedPtr scanMsg,
-  pcl::PointCloud<velodyne_pointcloud::PointXYZIRADT>::Ptr interpolate_points_xyziradt)
+  pcl::PointCloud<velodyne_pointcloud::PointXYZIRADT>::Ptr points_xyziradt)
 {
   /* handshake with accelerator */
   if (!handshakeWithAccelerator()) {
@@ -273,17 +268,17 @@ bool PointcloudPreprocessorDriver::requestPointCloudPreprocessing(
     point_data_tmp.distance   = convFix16ToFloat<float>(fix16_distance);
     point_data_tmp.time_stamp = 
       static_cast<double>(time_stamp_32) / 1000.0 / 1000.0 / 10.0; /* 100[ns] -> 1[s] */
-    interpolate_points_xyziradt->points.push_back(point_data_tmp);
+    points_xyziradt->points.push_back(point_data_tmp);
   }
   delete[] recv_buf;
 
-  interpolate_points_xyziradt->header = pcl_conversions::toPCL(scanMsg->header);
+  points_xyziradt->header = pcl_conversions::toPCL(scanMsg->header);
   // Find timestamp from first/last point (and maybe average)?
-  double first_point_timestamp = interpolate_points_xyziradt->points.front().time_stamp;
-  interpolate_points_xyziradt->header.stamp =
+  double first_point_timestamp = points_xyziradt->points.front().time_stamp;
+  points_xyziradt->header.stamp =
     pcl_conversions::toPCL(rclcpp::Time(toChronoNanoSeconds(first_point_timestamp).count()));
-  interpolate_points_xyziradt->height = 1;
-  interpolate_points_xyziradt->width = interpolate_points_xyziradt->points.size();
+  points_xyziradt->height = 1;
+  points_xyziradt->width = points_xyziradt->points.size();
 
   close(sockfd_);
 

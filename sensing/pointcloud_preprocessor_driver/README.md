@@ -8,6 +8,7 @@ This package includes the following filters:
 
 - cropping
 - correcting distortion
+- removing outlier points
 
 ## Inner-workings / Algorithms
 
@@ -17,6 +18,7 @@ Detail description of each filter's algorithm is in the following links to docum
 | ---------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | `crop_box_filter`      | remove points within a given box                                                   | [link](../pointcloud_preprocessor/docs/crop-box-filter.md)       |
 | `distortion_corrector` | compensate pointcloud distortion caused by ego vehicle's movement during 1 scan    | [link](../pointcloud_preprocessor/docs/distortion-corrector.md)  |
+| `outlier_filter`       | remove points caused by hardware problems, rain drops and small insects as a noise | [link](../pointcloud_preprocessor/docs/outlier-filter.md)        |
 
 ## Inputs / Outputs
 
@@ -29,9 +31,9 @@ Detail description of each filter's algorithm is in the following links to docum
 
 ### Output
 
-| Name                       | Type                            | Description     |
-| -------------------------- | ------------------------------- | --------------- |
-| `/rectified/pointcloud_ex` | `sensor_msgs::msg::PointCloud2` | filtered points |
+| Name                           | Type                            | Description     |
+| ------------------------------ | ------------------------------- | --------------- |
+| `/outlier_filtered/pointcloud` | `sensor_msgs::msg::PointCloud2` | filtered points |
 
 ## Parameters
 
@@ -42,6 +44,7 @@ Detail description of each filter's algorithm is in the following links to docum
 | `min_range`        | double | 0.4           | minimum range to publish                   |
 | `max_range`        | double | 130.0         | maximum range to publish                   |
 | `scan_phase`       | double | 0.0           | start/end phase for the scan (in degrees)  |
+| `max_queue_size`   | int    | 5             | max queue size of input/output topics      |
 
 ## Requirements
 
