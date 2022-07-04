@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>pointcloud_preprocessor_driver</name>
+  <version>0.1.0</version>
+  <description>The ROS2 pointcloud_preprocessor_driver package</description>
+
+  <maintainer email="daichi.murakami@tier4.jp">Daichi Murakami</maintainer>
+  <license>Apache License 2.0</license>
+
+  <buildtool_depend>ament_cmake_auto</buildtool_depend>
+
+  <depend>pcl_conversions</depend>
+  <depend>sensor_msgs</depend>
+  <depend>velodyne_msgs</depend>
+  <depend>rclcpp</depend>
+  <depend>autoware_auto_vehicle_msgs</depend>
+  <depend>velodyne_pointcloud</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>autoware_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
